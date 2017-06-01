@@ -24,7 +24,7 @@ class ProductTest < ActiveSupport::TestCase
                           image_url:   "zzz.jpg")  
     product.price = -1
     assert product.invalid?
-    assert_equal ["must be greater than or equal to gi0.01"], product.errors[:price]
+    assert_equal ["must be greater than or equal to 0.01"], product.errors[:price]
 
     product.price = 0
     assert product.invalid?
@@ -72,6 +72,6 @@ class ProductTest < ActiveSupport::TestCase
                           price:       1,
                           image_url:   "zzz.jpg")                        
     assert product.invalid?
-    assert_equal ["test"], product.errors[:title]
+    assert_equal ["is too short (minimum is 10 characters)"], product.errors[:title]
   end                          
 end
