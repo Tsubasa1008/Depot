@@ -16,8 +16,6 @@ class ProductTest < ActiveSupport::TestCase
     assert product.errors[:price].any?
   end
 
-
-
   test "product price must be positive" do
     product = Product.new(title:       "My Book Title",
                           description: "yyy",
@@ -73,5 +71,14 @@ class ProductTest < ActiveSupport::TestCase
                           image_url:   "zzz.jpg")                        
     assert product.invalid?
     assert_equal ["is too short (minimum is 10 characters)"], product.errors[:title]
-  end                          
+  end    
+
+  test "商品圖片路徑不可相同" do 
+    product = Product.new(title:       "aaa",
+                          description: "bbb",
+                          price:       1,
+                          image_url:   products(:ruby).image_url)
+    assert product.invalid?
+    assert_equal ["has already been taken"], product.errors[:image_url]                          
+  end                      
 end

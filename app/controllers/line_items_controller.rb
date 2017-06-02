@@ -4,6 +4,7 @@ class LineItemsController < ApplicationController
   before_action :set_cart, only: [:create]
   after_action :init_count, only: [:create]
   before_action :set_line_item, only: [:show, :edit, :update, :destroy]
+  rescue_from ActiveRecord::RecordNotFound, with: :invalid_line_item
 
   # GET /line_items
   # GET /line_items.json
@@ -61,7 +62,8 @@ class LineItemsController < ApplicationController
   def destroy
     @line_item.destroy
     respond_to do |format|
-      format.html { redirect_to line_items_url, notice: 'Line item was successfully destroyed.' }
+      notice = "已移除品項 " + @line_item.product.title + " 。"
+      format.html { redirect_to @line_item.cart, notice: notice }
       format.json { head :no_content }
     end
   end
@@ -75,5 +77,11 @@ class LineItemsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def line_item_params
       params.require(:line_item).permit(:product_id)
+    end
+
+    # 存取不存在的 line_item
+    def invalid_line_item
+      logger.error "Attempt to access invalid line_item #{params[:id]}"
+      redirect_to store_index_url, notice: 'Invalid line_item'
     end
 end
