@@ -1,6 +1,9 @@
 class StoreController < ApplicationController
   include CurrentCount
   before_action :set_count, :show_count_message, only: [:index]
+  include CurrentCart
+  before_action :set_cart
+  
   def index
     @products = Product.order(:title)
   end
