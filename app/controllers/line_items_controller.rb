@@ -1,9 +1,10 @@
 class LineItemsController < ApplicationController
   include CurrentCart
   include CurrentCount
-  before_action :set_cart, only: [:create]
+  before_action :set_cart, only: [:create, :destroy, :increase, :decrease]
   after_action :init_count, only: [:create]
-  before_action :set_line_item, only: [:show, :edit, :update, :destroy]
+  before_action :set_line_item, only: [:show, :edit, :update, :destroy, :increase, :decrease]
+  before_action :set_price, only: [:increase, :decrease]
   rescue_from ActiveRecord::RecordNotFound, with: :invalid_line_item
 
   # GET /line_items
@@ -65,7 +66,32 @@ class LineItemsController < ApplicationController
     respond_to do |format|
       notice = "已移除品項 " + @line_item.product.title + " 。"
       format.html { redirect_to @line_item.cart, notice: notice }
+      format.js   { @current_item = @line_item }
       format.json { head :no_content }
+    end
+  end
+
+  # increase quantity
+  def increase
+    @line_item.increase_quantity
+
+    respond_to do |format|
+      if @line_item.save
+        format.html { redirect_to @line_item.cart }
+        format.js   { @current_item = @line_item }
+      end
+    end
+  end
+
+  # decrease quantity
+  def decrease
+    @line_item.decrease_quantity
+
+    respond_to do |format|
+      if @line_item.save
+        format.html { redirect_to @line_item.cart }
+        format.js   { @current_item = @line_item }
+      end
     end
   end
 
@@ -84,5 +110,9 @@ class LineItemsController < ApplicationController
     def invalid_line_item
       logger.error "Attempt to access invalid line_item #{params[:id]}"
       redirect_to store_index_url, notice: 'Invalid line_item'
+    end
+
+    def set_price
+      @line_item.check_price
     end
 end

@@ -1,5 +1,11 @@
 Rails.application.routes.draw do
-  resources :line_items
+  resources :line_items do
+    member do
+      post 'decrease'
+      post 'increase'
+    end
+  end
+  
   resources :carts
   root 'store#index', as: 'store_index'
 
