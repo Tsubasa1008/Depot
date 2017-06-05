@@ -6,7 +6,9 @@
   <td><%= line_item.quantity %> &times;</td>
   <td><%= line_item.product.title %></td>
   <td class="item_price"><%= number_to_currency(line_item.total_price) %></td>
-  <td><%= button_to '▲', increase_line_item_path(line_item), method: :post, remote: true %></td>
+  <% unless @mail %>
+  <td><%= button_to '▲', increase_line_item_path(line_item), remote: true %></td>
   <td><%= button_to '▼', decrease_line_item_path(line_item), remote: true %></td>
   <td calss="delete_item"><%= button_to '移除品項', line_item, method: :delete, remote: true %></td>
+  <% end %>
 </tr>
