@@ -5,6 +5,7 @@ class LineItemsController < ApplicationController
   after_action :init_count, only: [:create]
   before_action :set_line_item, only: [:show, :edit, :update, :destroy, :increase, :decrease]
   before_action :set_price, only: [:increase, :decrease]
+  skip_before_action :authorize, only: :create
   rescue_from ActiveRecord::RecordNotFound, with: :invalid_line_item
 
   # GET /line_items
